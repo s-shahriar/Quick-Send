@@ -23,6 +23,8 @@ import { default as RequestedAssets } from "../Pages/Requested-Assets/RequestedA
 import AddEmployee from "../Pages/Team/AddEmployee";
 import EmployeeTeam from "../Pages/Team/EmployeeTeam";
 import HREmployeeList from "../Pages/Team/HREmployeeList";
+import CashIn from "../Pages/UserTransaction/CashIn";
+import CashOut from "../Pages/UserTransaction/CashOut";
 import SendMoney from "../Pages/UserTransaction/SendMoney";
 
 const router = createBrowserRouter([
@@ -56,6 +58,22 @@ const router = createBrowserRouter([
         element: (
           <UserProtector>
             <SendMoney></SendMoney>
+          </UserProtector>
+        ),
+      },
+      {
+        path: "cash-out",
+        element: (
+          <UserProtector>
+            <CashOut></CashOut>
+          </UserProtector>
+        ),
+      },
+      {
+        path: "cash-in",
+        element: (
+          <UserProtector>
+            <CashIn></CashIn>
           </UserProtector>
         ),
       },
