@@ -1,10 +1,10 @@
 import React from "react";
 import { Helmet } from "react-helmet";
 import LoadingSpinner from "../../Components/LoadingSpinner";
-import useRole from "../../Hooks/useRole"
-import UserHome from "./UserHome";
+import useRole from "../../Hooks/useRole";
 import GuestHome from "./GuestHome";
 import HRHome from "./HRHome";
+import UserHome from "./UserHome";
 
 
 const Home = () => {
@@ -20,9 +20,8 @@ const Home = () => {
         <title>Home - Quick Send</title>
       </Helmet>
       {(data?.role === undefined) && <GuestHome />}
-      {data?.role === 'user' && <UserHome />}
+      {(data?.role === 'user' ||data?.role === 'agent') && <UserHome />}
       {data?.role === 'admin' && <HRHome />}
-      // TODO - AGENT
     </div>
   );
 };

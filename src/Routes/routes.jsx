@@ -1,4 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
+import AgentProtector from "../Components/AgentProtector";
 import HrProtector from "../Components/HrProtector";
 import LoginProtector from "../Components/LoginProtect";
 import PrivateRoute from "../Components/PrivateRoute";
@@ -6,6 +7,7 @@ import RegisterProtect from "../Components/RegisterProtect";
 import Transaction from "../Components/Transaction";
 import { default as EmployeeProtector, default as UserProtector } from "../Components/UserProtector";
 import AddAsset from "../Pages/Add-Asset/AddAsset";
+import TransactionManagement from "../Pages/Agent/TransactionManagement";
 import UpdateAsset from "../Pages/Asset-Update/UpdateAsset";
 import AllAssets from "../Pages/Assets-List/AllAssets";
 import RequestAssets from "../Pages/Assets-List/RequestAssets";
@@ -85,6 +87,14 @@ const router = createBrowserRouter([
           <LoginProtector>
             <Transaction></Transaction>
           </LoginProtector>
+        ),
+      },
+      {
+        path: "transaction-management",
+        element: (
+          <AgentProtector>
+            <TransactionManagement></TransactionManagement>
+          </AgentProtector>
         ),
       },
       {

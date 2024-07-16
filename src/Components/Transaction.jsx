@@ -63,7 +63,16 @@ const Transaction = () => {
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   const formatAmount = (amount) => `${amount} tk.`;
-  const formatFee = (fee) => `${fee.toFixed(2)} tk.`;
+  const formatFee = (fee) => (fee !== undefined ? `${fee.toFixed(2)} tk` : "0 tk");
+
+  if (transactions.length === 0) {
+    return (
+      <div className="container mx-auto px-4 py-8 bg-primary text-white text-center">
+        <h1 className="text-5xl font-bold mb-4">No transaction history found</h1>
+        <p className="text-lg">There are no transactions available for display.....</p>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8 bg-primary">
@@ -94,7 +103,13 @@ const Transaction = () => {
             {currentItems.map((transaction) => (
               <tr key={transaction._id}>
                 <td className="py-2 px-4 border border-gray-300">
-                  {transaction.type === "sendMoney" ? "Send Money" : "Cash Out"}
+                  {transaction.type === "sendMoney"
+                    ? "Send Money"
+                    : transaction.type === "Cash In"
+                    ? "Cash In"
+                    : (transaction.type === "Cash Out" || transaction.type === "cashOut" )
+                    ? "Cash Out"
+                    : ""}
                 </td>
                 <td className="py-2 px-4 border border-gray-300">
                   {formatAmount(transaction.amount)}
