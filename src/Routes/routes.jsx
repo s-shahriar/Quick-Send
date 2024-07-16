@@ -1,7 +1,9 @@
 import { createBrowserRouter } from "react-router-dom";
 import HrProtector from "../Components/HrProtector";
+import LoginProtector from "../Components/LoginProtect";
 import PrivateRoute from "../Components/PrivateRoute";
 import RegisterProtect from "../Components/RegisterProtect";
+import Transaction from "../Components/Transaction";
 import { default as EmployeeProtector, default as UserProtector } from "../Components/UserProtector";
 import AddAsset from "../Pages/Add-Asset/AddAsset";
 import UpdateAsset from "../Pages/Asset-Update/UpdateAsset";
@@ -75,6 +77,14 @@ const router = createBrowserRouter([
           <UserProtector>
             <CashIn></CashIn>
           </UserProtector>
+        ),
+      },
+      {
+        path: "transactions-history",
+        element: (
+          <LoginProtector>
+            <Transaction></Transaction>
+          </LoginProtector>
         ),
       },
       {
