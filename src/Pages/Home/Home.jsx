@@ -2,8 +2,8 @@ import React from "react";
 import { Helmet } from "react-helmet";
 import LoadingSpinner from "../../Components/LoadingSpinner";
 import useRole from "../../Hooks/useRole";
+import AdminHome from "./AdminHome";
 import GuestHome from "./GuestHome";
-import HRHome from "./HRHome";
 import UserHome from "./UserHome";
 
 
@@ -21,7 +21,7 @@ const Home = () => {
       </Helmet>
       {(data?.role === undefined) && <GuestHome />}
       {(data?.role === 'user' ||data?.role === 'agent') && <UserHome />}
-      {data?.role === 'admin' && <HRHome />}
+      {data?.role === 'admin' && <AdminHome />}
     </div>
   );
 };

@@ -9,7 +9,7 @@ const Warning = () => {
         </button>
 
         <div className="shadow-[4px_4px_1px_rgb(13,148,136)] p-8 border border-black text-center">
-          It looks like you account creation is still not approved, please wait for
+          It looks like your account is still not approved, please wait for
           <span className="font-mono text-teal-700 font-bold">{" "}Admin's approval</span>{" "}
           for transaction permissions.....
         </div>

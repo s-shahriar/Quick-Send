@@ -23,10 +23,10 @@ const CashOut = () => {
     document.title = "Cash Out";
   }, []);
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (formData) => {
     setSendingRequest(true);
     try {
-      const res = await axiosSecure.post("/cash-out", data);
+      const res = await axiosSecure.post("/cash-out", formData);
       if (res?.data?.message === "Cash-out request created successfully") {
         reset();
         Swal.fire({
@@ -46,6 +46,18 @@ const CashOut = () => {
       });
     }
     setSendingRequest(false);
+  };
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText("01234567891").then(() => {
+      Swal.fire({
+        title: "Copied",
+        text: "Sample Agent No.: 01234567891 has been copied to clipboard",
+        icon: "success",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+    });
   };
 
   if (sendingRequest) return <LoadingSpinner />;
@@ -72,20 +84,30 @@ const CashOut = () => {
               <label htmlFor="agentMobileNumber" className="text-sm">
                 Agent Mobile Number *
               </label>
-              <input
-                id="agentMobileNumber"
-                type="tel"
-                pattern="[0-9]{11}"
-                placeholder="Agent Mobile Number"
-                {...register("agentMobileNumber", {
-                  required: true,
-                  validate: (value) =>
-                    value !== data.mobileNumber || "Cannot cash out to yourself",
-                })}
-                className={`w-full rounded-md focus:ring focus:ring-opacity-75 text-gray-900 focus:ring-violet-600 border-gray-300 ${
-                  errors.agentMobileNumber ? "border-red-500" : ""
-                }`}
-              />
+              <div className="flex items-center">
+                <input
+                  id="agentMobileNumber"
+                  type="tel"
+                  pattern="[0-9]{11}"
+                  placeholder="Agent Mobile Number"
+                  {...register("agentMobileNumber", {
+                    required: true,
+                    validate: (value) =>
+                      value !== data.mobileNumber || "Cannot cash out to yourself",
+                  })}
+                  className={`w-full rounded-md focus:ring focus:ring-opacity-75 text-gray-900 focus:ring-violet-600 border-gray-300 ${
+                    errors.agentMobileNumber ? "border-red-500" : ""
+                  }`}
+                />
+                <button
+                  type="button"
+                  onClick={handleCopy}
+                  className="ml-2 text-sm bg-teal-500 text-white px-3 py-1 rounded-md hover:bg-teal-600"
+                >
+                  Copy
+                </button>
+              </div>
+              <p className="text-sm text-gray-600 mt-1">(Sample Agent No.: 01234567891)</p>
               {errors.agentMobileNumber && (
                 <span className="text-red-500 text-sm">
                   {errors.agentMobileNumber.message ||

@@ -13,7 +13,7 @@ const UserHome = () => {
     if (showBalance) {
       timeoutId = setTimeout(() => {
         setShowBalance(false);
-      }, 10000); // Hide balance after 10 seconds
+      }, 10000); 
     }
 
     return () => {
@@ -25,7 +25,7 @@ const UserHome = () => {
     return <LoadingSpinner />;
   }
 
-  if (status === "pending") {
+  if (status === "pending" || status === "blocked") {
     return (
       <div className="my-4 space-y-6">
         <h1 className="text-4xl font-bold text-center text-teal-500 mb-6">
