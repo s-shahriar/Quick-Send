@@ -1,19 +1,71 @@
+# Welcome to Quick Send
+
+## About Quick Send
+
+Quick Send is an efficient money transfer platform designed to facilitate quick and secure transactions between users. With Quick Send, users can easily send money, manage their transactions, and ensure seamless financial operations.
+
+**Live Link**: [Quick Send](https://mfs-project-d9f9e.web.app/)
+
 # CAUTION
 
 **For browsing the site as an Admin, please use the following credentials:**
 
 ```
-Email: hr@hr.com
-Password: 123Qwe
+Email: admin@admin.com
+PIN: 12345
 ```
 
-# Welcome to Asset Mart
+**For browsing the site as an Agent, please use the following (you can register as a new agent in site too):**
 
-## About Asset Mart
+```
+Email: one@agent.com
+//or
+Phone Number: 01234567891
+PIN: 12345
+```
 
-Asset Mart is a robust asset management platform designed to simplify the process of tracking, managing, and requesting various assets within an organization. With Asset Mart, users can easily browse available assets, request items, manage their team, and streamline the asset allocation process.
+## Installation
 
-**Live Link**: [Asset Mart](https://assetmart-8e93a.web.app/)
+To install the Asset Mart project on your local machine, follow these steps:
+
+1. **Clone the Repository**: Clone the repository to your local machine using the following command:
+
+   ```
+   git clone https://github.com/s-shahriar/Quick−Send.git
+   ```
+
+2. **Navigate to the Project Directory**: Change to the project directory:
+
+   ```
+   cd quick-send
+   ```
+
+3. **Install Dependencies**: Install the required dependencies for both the client and server:
+
+   ```
+   ## for client
+   npm install
+
+   ## for server
+   cd ../server
+   npm install
+   ```
+
+4. **Set Up Environment Variables**: Create a `.env` file in the server directory and add your environment variables:
+
+   ```
+   PORT=5000
+   MONGO_URI=your_mongo_connection_string
+   JWT_SECRET=your_jwt_secret
+   ```
+
+5. **Start the Development Server**: Run the following command to start the development server:
+
+   ```
+   npm run dev
+   ```
+
+6. **Access the Application**: Open your browser and go to `http://localhost:3000` to view the application.
 
 ## Table of Contents
 
@@ -27,16 +79,13 @@ Asset Mart is a robust asset management platform designed to simplify the proces
 
 ### Features
 
-- **Asset Catalogue**: Browse through a comprehensive list of assets available in the organization.
-- **Asset Requests**: Employees can request assets, including both returnable and non-returnable items, with an easy-to-use modal for additional notes.
-- **Team Management**: HR Managers can manage their team members, adding or removing employees with a simple interface.
-- **Payment Integration**: HR Managers can purchase different packages to increase their team's member limit, with payment confirmation integrated into the platform.
+- **Send Money**: Easily transfer money to other users with secure PIN and JWT verification.
+- **Transaction Management**: Agents can manage and approve/deny transaction requests efficiently.
+- **Cash-In Requests**: Users can request to cash in through agents without any fees.
+- **Role-Based Navigation**: Dynamic navbar options based on user roles (User, Agent, Admin).
+- **Real-Time Updates**: All transactions and status changes are reflected in real-time.
+- **User Management**: Admins can manage users and their transaction history.
 - **Search and Filters**: Advanced search and filtering capabilities for assets and requests, allowing users to find items by name, type, and status.
-- **Request Status Management**: HR Managers can approve or reject asset requests, with a clear status update and management interface.
-- **Asset Management**: HR Managers can add new assets, update existing asset details, and delete items as necessary, with quantity management and stock status updates.
-- **Employee Onboarding**: HR Managers can onboard new employees, assigning them to the team and setting up their company information.
-- **Interactive UI**: Engaging user interface with responsive design, making asset management intuitive and user-friendly.
-- **Real-Time Updates**: All changes and actions are reflected in real-time, ensuring up-to-date asset and request statuses.
 
 ### Libraries Used
 
@@ -45,6 +94,9 @@ Asset Mart is a robust asset management platform designed to simplify the proces
 - [react-tooltip](https://react-tooltip.com/docs/getting-started): Utilized for creating informative tooltips, providing additional context when users interact with certain elements, enhancing usability.
 - [react-simple-typewriter](https://www.npmjs.com/package/react-simple-typewriter): Employed for implementing typewriter-style text animation, adding a dynamic touch to text elements across the website.
 - [swiper.js](https://swiperjs.com/): Integrated Swiper.js for creating interactive and responsive sliders, enhancing the presentation of content such as asset carousels and featured items.
+- [react-hook-form](https://react-hook-form.com/) : Used for handling form validation and submission.
+- [axios](https://axios-http.com/): Utilized for making secure API calls.
+- [sweetalert2](https://sweetalert2.github.io/): Used for creating interactive alerts for better user experience.
 
 ### Technologies Used
 
@@ -53,34 +105,21 @@ Asset Mart is a robust asset management platform designed to simplify the proces
 - **Back-end**: ExpressJS
 - **Database**: MongoDB
 
-### Design Inspiration
-
-#### Modern & Functional
-
-Our design is inspired by modern, clean interfaces that prioritize functionality and ease of use. With a focus on usability, Asset Mart ensures a smooth experience for all users.
-
-#### Interactive Elements
-
-Interactive elements and animations enhance the user experience, making asset management engaging and intuitive.
-
-#### Responsive Layout
-
-The responsive layout adapts seamlessly to various devices, ensuring a consistent experience across desktops, tablets, and smartphones.
-
----
-
 ## Usage
 
-### For HR Managers
+### For Admins
 
-- **Manage Team**: Add or remove employees, set their limits, and view team details.
-- **Asset Management**: Add, update, or delete assets. Manage asset details such as quantity, type, and stock status.
-- **Payment Gateway**: Purchase packages to increase your team's member limit.
+- **Manage Users**: Add, update, or delete users and view their transaction history.
 
-### For Employees
+### For Agents
 
-- **Request Assets**: Browse available assets, filter by status and type, and request items with additional notes.
-- **View Requests**: Check the status of your requests, and interact with your requested items through approval or cancellation options.
+- **Transaction Management**: Approve or deny cash-in and cash-out requests from users.
+
+### For Users
+
+- **Send Money**: Transfer money to other users securely.
+- **Request Cash-In**: Request to cash in through agents without any fees.
+- **View Transactions**: Check the status of your transactions and interact with them.
 
 ---
 

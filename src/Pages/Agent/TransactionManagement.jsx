@@ -1,60 +1,91 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React from "react";
+import Swal from "sweetalert2";
 import useAuth from "../../Hooks/useAuth";
 import useAxiosSecure from "../../Hooks/useAxiosSecure";
 
 const TransactionManagement = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient(); 
 
-  console.log("User Email:", user.email); // Check if user.email is set
+  const { data: userIdData, error: userIdError } = useQuery({
+    queryKey: ["userId", user.email],
+    queryFn: async () => {
+      const response = await axiosSecure.get("/all-users");
+      const userRecord = response.data.find((usr) => usr.email === user.email);
+      return userRecord ? userRecord._id : null;
+    },
+    enabled: !!user.email,
+  });
 
-  // Fetch all requests
+
   const { data: requests, error: requestsError } = useQuery({
-    queryKey: ['requests'],
+    queryKey: ["requests"],
     queryFn: async () => {
       const response = await axiosSecure.get("/requests");
       return response.data;
-    }
+    },
   });
 
-  console.log("Requests:", requests); // Log requests data
 
-  // Fetch all users and map them by email
-  const { data: users, error: usersError } = useQuery({
-    queryKey: ['allUsers'],
+  const { data: allUsersData, error: allUsersError } = useQuery({
+    queryKey: ["allUsers"],
     queryFn: async () => {
       const response = await axiosSecure.get("/all-users");
-      console.log(response.data); // Log user data to verify email field
       return response.data.reduce((acc, user) => {
-        acc[user.email] = user.name; // Map by email
+        acc[user._id] = user.name; 
         return acc;
       }, {});
-    }
+    },
   });
 
-  console.log("Users:", users); // Log users data
-
-  // Filter requests to show only those related to the agent's email
-  const filteredRequests = requests?.filter((request) => {
-    console.log("Request Agent ID:", request.agentId); // Log agent ID from request
-    const agentEmail = Object.keys(users).find(key => users[key] === user.name);
-    return agentEmail === user.email;
+  const handleAction = useMutation({
+    mutationFn: async ({ requestId, action }) => {
+      const { data } = await axiosSecure.post("/manage-transaction", {
+        requestId,
+        action,
+      });
+      return data;
+    },
+    onSuccess: (data, variables) => {
+      Swal.fire({
+        title: "Success",
+        text: data.message,
+        icon: "success",
+      });
+      queryClient.invalidateQueries({ queryKey: ["requests"] }); // Invalidate the requests query
+    },
+    onError: (error) => {
+      Swal.fire({
+        title: "Error",
+        text: error?.response?.data?.message,
+        icon: "error",
+      });
+    },
   });
 
-  console.log("Filtered Requests:", filteredRequests); // Log filtered requests
+  // Step 5: Filter requests where agentId matches the obtained userId
+  const filteredRequests = requests?.filter(
+    (request) => request.agentId === userIdData
+  );
+
+
+  if (userIdError) {
+    return <div>Error fetching user ID: {userIdError.message}</div>;
+  }
 
   if (requestsError) {
     return <div>Error fetching requests: {requestsError.message}</div>;
   }
 
-  if (usersError) {
-    return <div className='container'>Error fetching users: {usersError.message}</div>;
+  if (allUsersError) {
+    return <div>Error fetching all users: {allUsersError.message}</div>;
   }
 
-  // Sort the filtered requests to show the latest ones first
-  const sortedRequests = filteredRequests?.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+  const sortedRequests = filteredRequests?.sort(
+    (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
+  );
 
   return (
     <div className="mx-auto px-4 py-8 bg-primary">
@@ -88,50 +119,73 @@ const TransactionManagement = () => {
               </tr>
             </thead>
             <tbody className="text-white">
-              {sortedRequests && sortedRequests.map(request => (
-                <tr key={request._id}>
-                  <td className="py-2 px-4 border border-gray-300 capitalize">
-                    {request?.type?.replace(/([A-Z])/g, " $1")}
-                  </td>
-                  <td className="py-2 px-4 border border-gray-300">
-                    {request?.amount} BDT
-                  </td>
-                  <td className="py-2 px-4 border border-gray-300">
-                    {users?.[request.userEmail] || request.userEmail} {/* Assuming request contains userEmail */}
-                  </td>
-                  <td className="py-2 px-4 border border-gray-300">
-                    {users?.[request.agentEmail] || request.agentEmail} {/* Assuming request contains agentEmail */}
-                  </td>
-                  <td className="py-2 px-4 border border-gray-300">
-                    {new Date(request.timestamp).toLocaleString()}
-                  </td>
-                  <td className="py-2 px-4 border border-gray-300 capitalize">
-                    {request.status}
-                  </td>
-                  <td className="py-2 px-4 border border-gray-300">
-                    {request.status === "pending" ? (
-                      <>
-                        <button
-                          onClick={() => handleAction.mutate({ requestId: request._id, action: "approve" })}
-                          className="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded mx-1"
+              {sortedRequests &&
+                sortedRequests.map((request) => (
+                  <tr key={request._id}>
+                    <td className="py-2 px-4 border border-gray-300 capitalize">
+                      {request?.type?.replace(/([A-Z])/g, " $1")}
+                    </td>
+                    <td className="py-2 px-4 border border-gray-300">
+                      {request?.amount} BDT
+                    </td>
+                    <td className="py-2 px-4 border border-gray-300">
+                      {allUsersData
+                        ? allUsersData[request.userId]
+                        : request.userId}
+                    </td>
+                    <td className="py-2 px-4 border border-gray-300">
+                      {allUsersData
+                        ? allUsersData[request.agentId]
+                        : request.agentId}
+                    </td>
+                    <td className="py-2 px-4 border border-gray-300">
+                      {new Date(request.timestamp).toLocaleString()}
+                    </td>
+                    <td className="py-2 px-4 border border-gray-300 capitalize">
+                      {request.status}
+                    </td>
+                    <td className="py-2 px-4 border border-gray-300">
+                      {request.status === "pending" ? (
+                        <>
+                          <button
+                            onClick={() =>
+                              handleAction.mutate({
+                                requestId: request._id,
+                                action: "approve",
+                              })
+                            }
+                            className="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded mx-1"
+                          >
+                            Approve
+                          </button>
+                          <button
+                            onClick={() =>
+                              handleAction.mutate({
+                                requestId: request._id,
+                                action: "deny",
+                              })
+                            }
+                            className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded mx-1"
+                          >
+                            Reject
+                          </button>
+                        </>
+                      ) : (
+                        <span
+                          className={`capitalize font-bold ${
+                            request?.status === "denied"
+                              ? "text-red-500"
+                              : request?.status === "approved"
+                              ? "text-green-500"
+                              : ""
+                          }`}
                         >
-                          Approve
-                        </button>
-                        <button
-                          onClick={() => handleAction.mutate({ requestId: request._id, action: "deny" })}
-                          className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded mx-1"
-                        >
-                          Reject
-                        </button>
-                      </>
-                    ) : (
-                      <span className={`capitalize font-bold ${request?.status === 'denied' ? 'text-red-500' : request?.status === 'approved' ? 'text-green-500' : ''}`}>
-                        {request?.status}
-                      </span>
-                    )}
-                  </td>
-                </tr>
-              ))}
+                          {request?.status}
+                        </span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         )}

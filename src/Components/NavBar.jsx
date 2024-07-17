@@ -100,7 +100,7 @@ const NavBar = () => {
           {/* Company Logo Portion Starts */}
           <NavLink
             to="/"
-            className="text-base font-extrabold text-yellow-300 ml-4"
+            className="text-xl font-extrabold text-yellow-300 ml-4"
           >
             QuicK Send
           </NavLink>

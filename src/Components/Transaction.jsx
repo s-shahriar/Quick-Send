@@ -11,6 +11,10 @@ const Transaction = () => {
   const [allUsers, setAllUsers] = useState({});
 
   useEffect(() => {
+    document.title = "Transaction History";
+  }, []);
+
+  useEffect(() => {
     const fetchTransactions = async () => {
       try {
         const response = await axiosSecure.get("/transaction-history");

@@ -38,7 +38,6 @@ const LoginTo = () => {
           mobileNumber: identifier,
         });
         email = response.data.email;
-        console.log(email)
       }
 
       const password = transformPinToPassword(pin);
