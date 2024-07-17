@@ -11,7 +11,7 @@ const Layout = () => {
   if (loading) return <LoadingSpinner />;
 
   return (
-    <div className="container m-auto">
+    <div className="m-auto">
       <Navbar />
       <Outlet></Outlet>
       <Footer />
