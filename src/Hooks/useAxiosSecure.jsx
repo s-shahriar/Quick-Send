@@ -1,5 +1,4 @@
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import useAuth from "./useAuth";
 
 const axiosSecure = axios.create({
@@ -9,7 +8,6 @@ const axiosSecure = axios.create({
 
 const useAxiosSecure = () => {
   const { logOut, setLoading } = useAuth();
-  const navigate = useNavigate();
 
   axiosSecure.interceptors.request.use(
     function (config) {
@@ -32,8 +30,8 @@ const useAxiosSecure = () => {
       console.log('status error in the interceptor', status);
       if (status === 401 || status === 403) {
         await logOut()
-        navigate('/login');
         setLoading(false)
+        window.location.href = "/"
       }
       return Promise.reject(error);
     }

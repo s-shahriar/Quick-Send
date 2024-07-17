@@ -9,6 +9,7 @@ const Transaction = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
   const [allUsers, setAllUsers] = useState({});
+  const [loading, setLoading] = useState(true); // State for loading indicator
 
   useEffect(() => {
     document.title = "Transaction History";
@@ -37,8 +38,18 @@ const Transaction = () => {
       }
     };
 
-    fetchTransactions();
-    fetchAllUsers();
+    const fetchData = async () => {
+      setLoading(true); // Set loading state
+      try {
+        await Promise.all([fetchTransactions(), fetchAllUsers()]);
+      } catch (error) {
+        console.error("Error fetching data", error);
+      } finally {
+        setLoading(false); // Set loading state to false when all data is fetched
+      }
+    };
+
+    fetchData();
   }, [axiosSecure]);
 
   const filterTransactions = () => {
@@ -70,16 +81,29 @@ const Transaction = () => {
   const formatFee = (fee) =>
     fee !== undefined ? `${fee.toFixed(2)} tk` : "0 tk";
 
+  if (loading) {
+    return (
+      <div className="text-center pt-4 bg-primary">
+          <h6 className="text-center uppercase text-teal-500 text-2xl font-bold">
+            Transaction History
+          </h6>
+          <h1 className="pb-5 text-5xl font-extrabold text-white">
+            Loading Your {" "}
+            <span className="text-uppercase text-5xl text-teal-500">
+              Transaction History....
+            </span>
+          </h1>
+        </div>
+    );
+  }
+
+
   if (transactions.length === 0) {
     return (
       <div className="bg-primary">
         <div className="container mx-auto px-4 py-8 text-white text-center">
-          <h1 className="text-5xl font-bold mb-4">
-            No transaction history found
-          </h1>
-          <p className="text-lg">
-            There are no transactions available for display.....
-          </p>
+          <h1 className="text-5xl font-bold pb-4">No transaction history found</h1>
+          <p className="text-lg">There are no transactions available for display.</p>
         </div>
       </div>
     );
@@ -93,7 +117,7 @@ const Transaction = () => {
             Transaction History
           </h6>
           <h1 className="mb-5 text-5xl font-extrabold text-white">
-            Explore Your{" "}
+            Browse Your{" "}
             <span className="text-uppercase text-5xl text-teal-500">
               Transaction History
             </span>

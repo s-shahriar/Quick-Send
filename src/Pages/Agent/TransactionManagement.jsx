@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import useAuth from "../../Hooks/useAuth";
 import useAxiosSecure from "../../Hooks/useAxiosSecure";
@@ -7,7 +7,8 @@ import useAxiosSecure from "../../Hooks/useAxiosSecure";
 const TransactionManagement = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
-  const queryClient = useQueryClient(); 
+  const queryClient = useQueryClient();
+  const [loading, setLoading] = useState(true);
 
   const { data: userIdData, error: userIdError } = useQuery({
     queryKey: ["userId", user.email],
@@ -19,7 +20,6 @@ const TransactionManagement = () => {
     enabled: !!user.email,
   });
 
-
   const { data: requests, error: requestsError } = useQuery({
     queryKey: ["requests"],
     queryFn: async () => {
@@ -28,13 +28,12 @@ const TransactionManagement = () => {
     },
   });
 
-
   const { data: allUsersData, error: allUsersError } = useQuery({
     queryKey: ["allUsers"],
     queryFn: async () => {
       const response = await axiosSecure.get("/all-users");
       return response.data.reduce((acc, user) => {
-        acc[user._id] = user.name; 
+        acc[user._id] = user.name;
         return acc;
       }, {});
     },
@@ -54,7 +53,7 @@ const TransactionManagement = () => {
         text: data.message,
         icon: "success",
       });
-      queryClient.invalidateQueries({ queryKey: ["requests"] }); // Invalidate the requests query
+      queryClient.invalidateQueries({ queryKey: ["requests"] });
     },
     onError: (error) => {
       Swal.fire({
@@ -65,22 +64,24 @@ const TransactionManagement = () => {
     },
   });
 
-  // Step 5: Filter requests where agentId matches the obtained userId
+  useEffect(() => {
+    if (userIdData && requests && allUsersData) {
+      setLoading(false);
+    }
+  }, [userIdData, requests, allUsersData]);
+
   const filteredRequests = requests?.filter(
     (request) => request.agentId === userIdData
   );
 
-
-  if (userIdError) {
-    return <div>Error fetching user ID: {userIdError.message}</div>;
-  }
-
-  if (requestsError) {
-    return <div>Error fetching requests: {requestsError.message}</div>;
-  }
-
-  if (allUsersError) {
-    return <div>Error fetching all users: {allUsersError.message}</div>;
+  if (userIdError || requestsError || allUsersError) {
+    return (
+      <div className="mx-auto px-4 py-8 bg-primary">
+        <div className="container text-center text-white">
+          <h1>Error fetching data. Please try again later.</h1>
+        </div>
+      </div>
+    );
   }
 
   const sortedRequests = filteredRequests?.sort(
@@ -94,10 +95,16 @@ const TransactionManagement = () => {
           Transaction Management
         </h6>
         <h1 className="mb-5 text-5xl font-extrabold text-white">
-          Manage Your{" "}
-          <span className="text-uppercase text-5xl text-teal-500">
-            Transactions
-          </span>
+          {loading ? (
+            <span>Loading Transaction Execution List...</span>
+          ) : (
+            <span>
+              Manage Your{" "}
+              <span className="text-uppercase text-5xl text-teal-500">
+                Transactions
+              </span>
+            </span>
+          )}
         </h1>
       </div>
       <div className="overflow-x-auto p-6">
